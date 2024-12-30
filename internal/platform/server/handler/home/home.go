@@ -33,8 +33,10 @@ func Handler() fiber.Handler {
 			Category int
 		}
 
-		query := "SELECT id, name, category FROM main_reads.all_accommodations aa LIMIT 10"
-		rows, _ := conn.Query(context.Background(), query)
+		rows, _ := conn.Query(
+			context.Background(),
+			"SELECT id, name, category FROM main_reads.all_accommodations aa LIMIT 10",
+		)
 
 		var accommodations []Accommodation
 
@@ -42,7 +44,7 @@ func Handler() fiber.Handler {
 			var acc Accommodation
 			err := rows.Scan(&acc.Id, &acc.Name, &acc.Category)
 			if err != nil {
-				return c.SendString(fmt.Sprintf("Error Fetching Accommodation Details. Error: %s", err))
+				return c.SendString(fmt.Sprintf("Error Fetching Accommodation Details: %v\n", err))
 			}
 			accommodations = append(accommodations, acc)
 		}
