@@ -3,7 +3,9 @@ package server
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/coroutines"
 	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/home"
+	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/hotels"
 	"log"
 )
 
@@ -29,4 +31,6 @@ func (s *Server) Run() error {
 
 func (s *Server) registerRoutes() {
 	s.app.Get("/", home.Handler())
+	s.app.Post("/hotels", hotels.Handler())
+	s.app.Get("/coroutines", coroutines.Handler())
 }
