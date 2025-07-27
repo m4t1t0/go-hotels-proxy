@@ -1,8 +1,8 @@
-package coroutines
+package countries
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/coroutines/request"
+	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/countries/request"
 )
 
 // Handler returns a fiber.Handler that fetches countries from multiple regions concurrently

@@ -5,8 +5,9 @@ import (
 	"sync"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/coroutines/client"
-	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/coroutines/model"
+	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/countries/Mapper"
+	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/countries/client"
+	"github.com/m4t1t0/go-hotels-proxy/internal/platform/server/handler/countries/model"
 )
 
 const (
@@ -95,15 +96,28 @@ func (s *CountriesService) HandleCountriesRequest(c *fiber.Ctx) error {
 	regions := []string{"europe", "africa"}
 	
 	// Fetch countries from multiple regions
-	countries, err := s.FetchCountriesFromMultipleRegions(regions)
+	rawCountries, err := s.FetchCountriesFromMultipleRegions(regions)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 	
-	// Return the combined countries data
-	return c.JSON(fiber.Map{
-		"countries": countries,
-	})
+	// Convert []model.Country to []interface{}
+	rawCountriesInterface := make([]interface{}, len(rawCountries))
+	for i, country := range rawCountries {
+		rawCountriesInterface[i] = country
+	}
+	
+	// Map the raw countries data using the mapper
+	mapper := Mapper.NewCountryMapper()
+	mappedCountries, err := mapper.MapCountries(rawCountriesInterface)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	
+	// Return the mapped countries data directly without a wrapper
+	return c.JSON(mappedCountries)
 }
